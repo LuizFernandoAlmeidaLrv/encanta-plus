@@ -6,6 +6,11 @@ from pathlib import Path
 import os
 import pymysql
 import dj_database_url
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Carrega .env da raiz do projeto (onde está manage.py)
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 # Corrige erro do MySQLdb no Render
 pymysql.install_as_MySQLdb()
@@ -14,12 +19,24 @@ pymysql.install_as_MySQLdb()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-#vym)a56lo6fie#m4cqgh=f1eld3d$m0@qsg=fa$&op^(*%-w@")
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = os.getenv("DEBUG") == "True"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(",")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
+DATABASES = {
+    'default': {
+        'ENGINE': os.getenv("DB_ENGINE", "django.db.backends.sqlite3"),
+        'NAME': os.getenv("DB_NAME", BASE_DIR / "db.sqlite3"),
+        'USER': os.getenv("DB_USER", ""),
+        'PASSWORD': os.getenv("DB_PASSWORD", ""),
+        'HOST': os.getenv("DB_HOST", "localhost"),
+        'PORT': os.getenv("DB_PORT", "3306"),
+    }
+}
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+MEDIA_URL = os.getenv("MEDIA_URL", "/media/")
+MEDIA_ROOT = os.path.join(BASE_DIR, os.getenv("MEDIA_ROOT", "media"))
 
 # Application definition
 INSTALLED_APPS = [
@@ -72,17 +89,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'EncantaMais.wsgi.application'
 
-# Database (funciona local e no Render)
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv(
-            "DATABASE_URL",
-            "mysql://admin_marmitaria:M@rtinell0@localhost:3306/encantamais"
-        ),
-        conn_max_age=600,
-        ssl_require=False,
-    )
-}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -121,14 +127,14 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = os.getenv("MEDIA_URL", "/media/")
+MEDIA_ROOT = os.path.join(BASE_DIR, os.getenv("MEDIA_ROOT", "media"))
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configuração do CORS
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Usuário customizado
