@@ -133,10 +133,25 @@ MEDIA_ROOT = os.path.join(BASE_DIR, os.getenv("MEDIA_ROOT", "media"))
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Configuração do CORS
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+# Configuração CORS
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",        # frontend local
+    "http://172.16.7.154:3000",    # frontend local usando IP
+    "https://encantamais-frontend.vercel.app",  # frontend produção
+]
 
-CORS_ALLOW_ALL_ORIGINS = False
-
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = list(default_headers := [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+])
+CORS_ALLOW_ALL_ORIGINS = False  # NUNCA True em produção
 # Usuário customizado
 AUTH_USER_MODEL = 'core.Usuario'
