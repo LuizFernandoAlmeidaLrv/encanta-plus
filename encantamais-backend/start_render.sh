@@ -4,6 +4,7 @@ set -x  # mostra cada comando enquanto executa
 
 echo "=== Instalando dependências ==="
 pip install --upgrade pip
+pip install Pillow
 pip install -r requirements.txt
 
 echo "=== Rodando migrações ==="
