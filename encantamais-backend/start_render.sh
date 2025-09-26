@@ -1,6 +1,6 @@
 #!/bin/bash
-set -e  # sai se algum comando falhar
-set -x  # mostra cada comando enquanto executa
+set -e  # Sai se algum comando falhar
+set -x  # Mostra cada comando enquanto executa
 
 echo "=== Instalando dependências ==="
 pip install --upgrade pip
@@ -21,11 +21,20 @@ retry_migrate() {
   done
 }
 
-# CHAMANDO a função
+# Chamando a função
 retry_migrate
 
 echo "=== Criando superusuário (se não existir) ==="
 python create_admin.py || echo "Superusuário já existe, pulando"
 
 echo "=== Iniciando Gunicorn ==="
-exec gunicorn EncantaMais.wsgi:application --bind 0.0.0.0:$PORT
+
+# Ajustes importantes para Render:
+# 1. Usa a porta que o Render fornece via variável $PORT
+# 2. Define 2 workers para não travar se um worker travar
+# 3. Timeout maior para evitar que o Render marque como travado
+exec gunicorn EncantaMais.wsgi:application \
+    --bind 0.0.0.0:$PORT \
+    --workers 2 \
+    --timeout 60 \
+    --log-level info
