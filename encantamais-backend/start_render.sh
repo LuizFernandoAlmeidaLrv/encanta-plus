@@ -19,6 +19,10 @@ retry_migrate() {
     sleep 5
   done
 }
+
+# CHAMANDO a função
+retry_migrate
+
 echo "=== Criando superusuário (se não existir) ==="
 python create_admin.py || echo "Superusuário já existe, pulando"
 
