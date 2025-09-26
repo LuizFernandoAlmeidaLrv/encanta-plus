@@ -31,7 +31,9 @@ DATABASES = {
         'PASSWORD': os.getenv("DB_PASSWORD", ""),
         'HOST': os.getenv("DB_HOST", "localhost"),
         'PORT': os.getenv("DB_PORT", "3306"),
+         "CONN_MAX_AGE": 60,  # mantém conexão persistente por 60 segundos
     }
+    
 }
 
 CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
