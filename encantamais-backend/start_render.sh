@@ -1,8 +1,12 @@
 #!/bin/bash
-# start_render.sh
+set -e  # sai se algum comando falhar
+set -x  # mostra cada comando enquanto executa
 
-echo "Instalando dependências..."
+echo "=== Instalando dependências ==="
+pip install --upgrade pip
 pip install -r requirements.txt
+
+echo "=== Rodando migrações ==="
 
 # Função para rodar migrate com retry
 retry_migrate() {
@@ -15,12 +19,8 @@ retry_migrate() {
     sleep 5
   done
 }
+echo "=== Criando superusuário (se não existir) ==="
+python create_admin.py || echo "Superusuário já existe, pulando"
 
-echo "Rodando migrations..."
-retry_migrate
-
-echo "Criando superuser se não existir..."
-python create_admin.py
-
-echo "Iniciando Gunicorn..."
+echo "=== Iniciando Gunicorn ==="
 exec gunicorn EncantaMais.wsgi:application --bind 0.0.0.0:$PORT
