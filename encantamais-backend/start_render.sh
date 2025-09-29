@@ -32,6 +32,6 @@ echo "=== Iniciando Gunicorn ==="
 # Ajustes importantes para Render:
 # 1. Usa a porta que o Render fornece via variável $PORT
 # 2. Define 2 workers para não travar se um worker travar
-# 3. Timeout maior para evitar que o Render marque como travado
+# 3. Timeout maior para evitar que o Render marque como travado, nada funciona
 exec python manage.py runserver 0.0.0.0:$PORT
 
