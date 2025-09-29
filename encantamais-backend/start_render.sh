@@ -33,8 +33,5 @@ echo "=== Iniciando Gunicorn ==="
 # 1. Usa a porta que o Render fornece via variável $PORT
 # 2. Define 2 workers para não travar se um worker travar
 # 3. Timeout maior para evitar que o Render marque como travado
-exec gunicorn EncantaMais.wsgi:application \
-    --bind 0.0.0.0:$PORT \
-    --workers 2 \
-    --timeout 60 \
-    --log-level info
+exec python manage.py runserver 0.0.0.0:$PORT
+
