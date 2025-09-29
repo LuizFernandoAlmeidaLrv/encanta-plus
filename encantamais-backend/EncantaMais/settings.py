@@ -4,16 +4,13 @@ Django settings for EncantaMais project.
 
 from pathlib import Path
 import os
-# import pymysql # REMOVIDO: Não é mais necessário para PostgreSQL
 import dj_database_url
 from dotenv import load_dotenv
-import logging # Adicionado para configuração de logging
+import logging
+from django.core.exceptions import ImproperlyConfigured # Importação adicionada
 
 # Carrega .env da raiz do projeto (onde está manage.py)
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
-
-# Corrige erro do MySQLdb quando usa PyMySQL # REMOVIDO: Não é mais necessário para PostgreSQL
-# pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,10 +19,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Configurações de Segurança
 # =========================
 SECRET_KEY = os.getenv("SECRET_KEY")
+
+# Verificação explícita da SECRET_KEY
+if not SECRET_KEY:
+    print("DEBUG: SECRET_KEY está vazia ou não foi definida corretamente!")
+    raise ImproperlyConfigured("A SECRET_KEY não pode ser vazia. Verifique as variáveis de ambiente do Render.")
+else:
+    print(f"DEBUG: SECRET_KEY lida com sucesso (tamanho: {len(SECRET_KEY)} caracteres).")
+
 DEBUG = os.getenv("DEBUG") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(",")
 
-print("DEBUG: settings.py está sendo carregado...") # DEBUG: Ponto de verificação
+print("DEBUG: settings.py está sendo carregado...")
 
 # =========================
 # Configuração Database
@@ -39,7 +44,7 @@ if os.getenv("DATABASE_URL"):
             ssl_require=True,
         )
     }
-    print("DEBUG: Configuração de banco de dados para PostgreSQL (Render) carregada.") # DEBUG: Ponto de verificação
+    print("DEBUG: Configuração de banco de dados para PostgreSQL (Render) carregada.")
 else:
     # Local → MySQL (ou SQLite como fallback)
     DATABASES = {
@@ -53,7 +58,7 @@ else:
             "CONN_MAX_AGE": 60,
         }
     }
-    print("DEBUG: Configuração de banco de dados local carregada.") # DEBUG: Ponto de verificação
+    print("DEBUG: Configuração de banco de dados local carregada.")
 
 # =========================
 # CORS e Media
@@ -61,7 +66,7 @@ else:
 CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
 MEDIA_URL = os.getenv("MEDIA_URL", "/media/")
 MEDIA_ROOT = os.path.join(BASE_DIR, os.getenv("MEDIA_ROOT", "media"))
-print("DEBUG: Configurações de CORS e Media carregadas.") # DEBUG: Ponto de verificação
+print("DEBUG: Configurações de CORS e Media carregadas.")
 
 # Application definition
 INSTALLED_APPS = [
@@ -82,7 +87,7 @@ INSTALLED_APPS = [
     "vendas",
     "financeiro",
 ]
-print("DEBUG: INSTALLED_APPS carregado.") # DEBUG: Ponto de verificação
+print("DEBUG: INSTALLED_APPS carregado.")
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -94,7 +99,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-print("DEBUG: MIDDLEWARE carregado.") # DEBUG: Ponto de verificação
+print("DEBUG: MIDDLEWARE carregado.")
 
 ROOT_URLCONF = "EncantaMais.urls"
 
@@ -113,7 +118,7 @@ TEMPLATES = [
         },
     },
 ]
-print("DEBUG: TEMPLATES carregado.") # DEBUG: Ponto de verificação
+print("DEBUG: TEMPLATES carregado.")
 
 WSGI_APPLICATION = "EncantaMais.wsgi.application"
 
@@ -124,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-print("DEBUG: AUTH_PASSWORD_VALIDATORS carregado.") # DEBUG: Ponto de verificação
+print("DEBUG: AUTH_PASSWORD_VALIDATORS carregado.")
 
 # Django REST Framework
 REST_FRAMEWORK = {
@@ -135,19 +140,19 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ),
 }
-print("DEBUG: REST_FRAMEWORK carregado.") # DEBUG: Ponto de verificação
+print("DEBUG: REST_FRAMEWORK carregado.")
 
 # Internationalization
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Cuiaba"
 USE_I18N = True
 USE_TZ = True
-print("DEBUG: Configurações de internacionalização e fuso horário carregadas.") # DEBUG: Ponto de verificação
+print("DEBUG: Configurações de internacionalização e fuso horário carregadas.")
 
 # Static files
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-print("DEBUG: Configurações de arquivos estáticos carregadas.") # DEBUG: Ponto de verificação
+print("DEBUG: Configurações de arquivos estáticos carregadas.")
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -174,11 +179,11 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 CORS_ALLOW_ALL_ORIGINS = False
-print("DEBUG: Configurações CORS adicionais carregadas." ) # DEBUG: Ponto de verificação
+print("DEBUG: Configurações CORS adicionais carregadas." )
 
 # Usuário customizado
 AUTH_USER_MODEL = "core.Usuario"
-print("DEBUG: AUTH_USER_MODEL carregado.") # DEBUG: Ponto de verificação
+print("DEBUG: AUTH_USER_MODEL carregado.")
 
 # Configuração de Logging (Adicionada para depuração)
 LOGGING = {
@@ -221,4 +226,4 @@ LOGGING = {
         },
     },
 }
-print("DEBUG: Configuração de LOGGING adicionada e carregada.") # DEBUG: Ponto de verificação
+print("DEBUG: Configuração de LOGGING adicionada e carregada.")
