@@ -27,18 +27,20 @@ retry_migrate
 echo "=== Criando superusuário (se não existir) === "
 python create_admin.py || echo "Superusuário já existe, pulando"
 
-# --- NOVAS VERIFICAÇÕES E INICIALIZAÇÃO SIMPLIFICADA DO GUNICORN ---
+echo "=== Verificando instalação do Gunicorn === "
+command -v gunicorn || { echo "Gunicorn não encontrado! Verifique requirements.txt"; exit 1; }
+
 echo "=== Testando importação do módulo WSGI === "
 python -c "import EncantaMais.wsgi" || { echo "Falha ao importar EncantaMais.wsgi! Verifique o nome do projeto e o arquivo wsgi.py"; exit 1; }
 
 echo "=== Tentando iniciar Gunicorn com comando simplificado === "
 
-# ADICIONE ESTA LINHA PARA DEPURACAO TEMPORARIA
-
-exec gunicorn EncantaMais.wsgi:application \
+# ADICIONE ESTA LINHA PARA GARANTIR QUE A SECRET_KEY SEJA PASSADA
+# O Render deve injetar SECRET_KEY no ambiente do script, e aqui a passamos para o Gunicorn
+exec SECRET_KEY="$SECRET_KEY" gunicorn EncantaMais.wsgi:application \
     --bind 0.0.0.0:$PORT \
     --workers 1 \
     --timeout 30 \
     --log-level debug
-# --- FIM DAS NOVAS VERIFICAÇÕES ---
 
+echo "=== Gunicorn iniciado (se você vir isso, algo está errado) === "
