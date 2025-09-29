@@ -35,6 +35,9 @@ python -c "import EncantaMais.wsgi" || { echo "Falha ao importar EncantaMais.wsg
 
 echo "=== Tentando iniciar Gunicorn com comando simplificado === "
 
+# EXPORTE A SECRET_KEY ANTES DE CHAMAR O EXEC
+export SECRET_KEY="$SECRET_KEY"
+
 # ADICIONE ESTA LINHA PARA GARANTIR QUE A SECRET_KEY SEJA PASSADA
 # O Render deve injetar SECRET_KEY no ambiente do script, e aqui a passamos para o Gunicorn
 exec SECRET_KEY="$SECRET_KEY" gunicorn EncantaMais.wsgi:application \
