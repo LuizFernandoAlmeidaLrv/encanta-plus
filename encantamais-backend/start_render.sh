@@ -33,16 +33,15 @@ command -v gunicorn || { echo "Gunicorn não encontrado! Verifique requirements.
 echo "=== Testando importação do módulo WSGI === "
 python -c "import EncantaMais.wsgi" || { echo "Falha ao importar EncantaMais.wsgi! Verifique o nome do projeto e o arquivo wsgi.py"; exit 1; }
 
+
 echo "=== Tentando iniciar Gunicorn com comando simplificado === "
 
-# EXPORTE A SECRET_KEY PARA O AMBIENTE DO SHELL
-export SECRET_KEY="$SECRET_KEY"
-
-# AGORA CHAME O GUNICORN. ELE VAI HERDAR A SECRET_KEY DO AMBIENTE.
-exec gunicorn EncantaMais.wsgi:application \
-    --bind 0.0.0.0:$PORT \
-    --workers 1 \
-    --timeout 30 \
-    --log-level debug
+# PASSE A SECRET_KEY DIRETAMENTE COMO UMA VARIAVEL DE AMBIENTE PARA O GUNICORN
+exec gunicorn EncantaMais.wsgi:application 
+    --bind 0.0.0.0:$PORT 
+    --workers 1 
+    --timeout 30 
+    --log-level debug 
+    --env SECRET_KEY="$SECRET_KEY"
 
 echo "=== Gunicorn iniciado (se você vir isso, algo está errado) === "
