@@ -2,11 +2,6 @@ from django.db import models
 from produtos.models.produto import Produto  # ajuste conforme seu app
 from django.conf import settings
 
-
-class FormacaoPreco(models.Model):
- from django.db import models
-from django.conf import settings
-
 class FormacaoPreco(models.Model):
     produto = models.OneToOneField(  # Chave primária
         Produto, 
