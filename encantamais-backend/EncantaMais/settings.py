@@ -174,7 +174,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 print("DEBUG: Configurações CORS adicionais carregadas." )
 
 # Custom User Model
-AUTH_USER_MODEL = 'usuarios.CustomUser'
+AUTH_USER_MODEL = "core.Usuario"
 print("DEBUG: AUTH_USER_MODEL carregado.")
 
 # Configuração de Logging para depuração
