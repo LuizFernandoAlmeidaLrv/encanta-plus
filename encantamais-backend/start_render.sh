@@ -39,7 +39,7 @@ echo "=== Tentando iniciar Gunicorn com comando simplificado === "
 exec gunicorn EncantaMais.wsgi:application \
     --bind 0.0.0.0:$PORT \
     --workers 1 \
-    --timeout 120 \
+    --timeout 30 \
     --log-level debug
 
 echo "=== Gunicorn iniciado (se você vir isso, algo está errado) === "
