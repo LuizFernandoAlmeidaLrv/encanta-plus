@@ -18,7 +18,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # =========================
 # Configurações de Segurança
 # =========================
-SECRET_KEY = os.getenv("SECRET_KEY")
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'a_fallback_key_for_local_dev_only') # Only for local development
 
 # Verificação explícita da SECRET_KEY
 if not SECRET_KEY:
