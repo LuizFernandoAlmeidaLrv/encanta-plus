@@ -37,11 +37,11 @@ python -c "import EncantaMais.wsgi" || { echo "Falha ao importar EncantaMais.wsg
 echo "=== Tentando iniciar Gunicorn com comando simplificado === "
 
 # PASSE A SECRET_KEY DIRETAMENTE COMO UMA VARIAVEL DE AMBIENTE PARA O GUNICORN
-exec gunicorn EncantaMais.wsgi:application 
-    --bind 0.0.0.0:$PORT 
-    --workers 1 
-    --timeout 30 
-    --log-level debug 
+exec gunicorn EncantaMais.wsgi:application \
+    --bind 0.0.0.0:$PORT \
+    --workers 1 \
+    --timeout 30 \
+    --log-level debug \
     --env SECRET_KEY="$SECRET_KEY"
 
 echo "=== Gunicorn iniciado (se você vir isso, algo está errado) === "
