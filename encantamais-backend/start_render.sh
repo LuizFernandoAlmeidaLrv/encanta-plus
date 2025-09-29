@@ -34,7 +34,6 @@ python -c "import EncantaMais.wsgi" || { echo "Falha ao importar EncantaMais.wsg
 echo "=== Tentando iniciar Gunicorn com comando simplificado === "
 
 # ADICIONE ESTA LINHA PARA DEPURACAO TEMPORARIA
-export SECRET_KEY="p(&(c^ljh_6nm8ih#=84(z#-d8@e)v9)kjusij+=i!0#y%%ar-"
 
 exec gunicorn EncantaMais.wsgi:application \
     --bind 0.0.0.0:$PORT \
