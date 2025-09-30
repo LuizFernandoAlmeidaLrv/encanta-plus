@@ -1,15 +1,10 @@
 #!/bin/bash
-set -e  # Sai se algum comando falhar
-set -x  # Mostra cada comando enquanto executa
+set -e  # sai se algum comando falhar
+set -x  # mostra cada comando enquanto executa
 
-echo "=== Instalando dependências === "
-pip install --upgrade pip
-pip install Pillow
-pip install -r requirements.txt
+echo "=== Rodando migrações ==="
 
-echo "=== Rodando migrações === "
-
-# Função para rodar migrate com retry
+# Função para rodar migrate com retry (em caso de banco ainda não pronto)
 retry_migrate() {
   n=0
   until [ $n -ge 5 ]
@@ -21,22 +16,25 @@ retry_migrate() {
   done
 }
 
-# Chamando a função
 retry_migrate
 
-echo "=== Criando superusuário (se não existir) === "
+echo "=== Criando superusuário (se não existir) ==="
 python create_admin.py || echo "Superusuário já existe, pulando"
 
-echo "=== Verificando instalação do Gunicorn === "
+echo "=== Verificando Gunicorn ==="
 command -v gunicorn || { echo "Gunicorn não encontrado! Verifique requirements.txt"; exit 1; }
 
-echo "=== Testando importação do módulo WSGI === "
-python -c "import EncantaMais.wsgi" || { echo "Falha ao importar EncantaMais.wsgi! Verifique o nome do projeto e o arquivo wsgi.py"; exit 1; }
+echo "=== Verificando SECRET_KEY no runtime ==="
+if [ -z "$SECRET_KEY" ]; then
+  echo "ERRO: SECRET_KEY não está definida no ambiente!"
+  exit 1
+else
+  echo "DEBUG: SECRET_KEY carregada (tamanho: ${#SECRET_KEY})"
+fi
 
-
-echo "=== Tentando iniciar Gunicorn com comando simplificado === "
-
-# PASSE A SECRET_KEY DIRETAMENTE COMO UMA VARIAVEL DE AMBIENTE PARA O GUNICORN
-exec gunicorn EncantaMais.wsgi:application  --bind 0.0.0.0:$PORT  --workers 1   --timeout 30 --log-level debug  --env SECRET_KEY="$SECRET_KEY"
-
-echo "=== Gunicorn iniciado (se você vir isso, algo está errado) === "
+echo "=== Iniciando Gunicorn ==="
+exec gunicorn EncantaMais.wsgi:application \
+    --bind 0.0.0.0:$PORT \
+    --workers 1 \
+    --timeout 30 \
+    --log-level debug
